@@ -157,51 +157,82 @@ def find_emails():
 	maternity_sents = sent_tokenize(maternity_content)
 	maternity_words = word_tokenize(maternity_content)
 
-	num_sents = len(maternity_sents)
-	for i in range(0,num_sents):
+	num_sents_m = len(maternity_sents)
+	for i in range(0,num_sents_m):
 	    line = maternity_sents[i]
-	    match = re.search(r'[\w\.-]+@[\w\.-]+', line)  
+	    match = re.search(r'[\w\.-]+@[\w\.-]+.', line)  
 	    if match != None:
 	    	print(match)
 
-
-def find_dates():
-	tika.initVM()
+	# Load florida 
 	florida = parser.from_file('floridaman.pdf')
 	florida_content = florida["content"]
-	print("Florida aritcle is loaded")
+	print("Florida rticle is loaded")
 
 	florida_sents = sent_tokenize(florida_content)
 	florida_words = word_tokenize(florida_content)
 
-	# Dates in format mm/dd/yyyy
-	num_sents = len(florida_sents)
-	for i in range(0,num_sents):
-	    line = florida_sents[i]
-	    match = re.search(r'\d{1,2}/\d{1,2}/\d{4}', line)  
-	    if match != None:
-	    	print(match)
-
-	# Dates in format Month dd, yyyy
-	months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-	num_sents = len(florida_sents)
-	for i in range(0,num_sents):
-	    line = florida_sents[i]
-	    month_key = any(months in line for months in months)
-	    if month_key != False: 
-	        match = re.search(r'\b[A-Z].*?\b[" "]{1}\d{1,2}[\,\.]{1}[" "]{1}\d{4}', line)  
-	        if match != None: 
-	        	print(match)
+	num_sents_f = len(florida_sents)
+	for i in range(0,num_sents_f):
+		line = florida_sents[i]
+		match = re.search(r'[\w\.-]+@[\w\.-]+.', line)  
+		if match != None:
+			print(match)
 
 
+	# My test 
+	mytest = "This is an email: megan@aol.com. This is not an email megan@. This is also an email hello@hello.org"
+	mytest_sents = sent_tokenize(mytest)
 
+	for i in range(0, len(mytest_sents)): 
+		line = mytest_sents[i]
+		match = re.search(r'[\w\.-]+@[\w\.-]+.', line) 
+		if match != None: 
+			print(match)
+
+
+
+
+def get_dates(sents):
+    months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    num_sents = len(sents)
+    for i in range(0,num_sents):
+        line = sents[i]
+        match = re.search(r'\d{1,2}/\d{1,2}/\d{4}', line)
+        match2 = re.search(r'\d{1,2}-\d{1,2}-\d{4}', line)
+        match3 = re.search(r'\d{4}/\d{1,2}/\d{1,2}', line)
+        match4 = re.search(r'\d{4}-\d{1,2}-\d{1,2}', line)
+        if match != None:
+            print(match)
+        if match2 != None: 
+            print(match2)
+        if match3 != None: 
+            print(match3)
+        if match4 != None:
+            print(match4)
+        month_key = any(months in line for months in months)
+        if month_key != False: 
+            match5 = re.search(r'\b[A-Z].*?\b[" "]{1}\d{1,2}[\,\.]{1}[" "]{1}\d{4}', line)  
+            if match5 != None: 
+                print(match5)
 
 
 
 if __name__ == '__main__':
 	print("Question 1 work ")
 	comparing_nltk_and_spacy()
-	print("Question 2a work")
+	print("Question 2a work- emails")
 	find_emails()
-	print("Question 2b work")
-	find_dates()
+	print("Question 2b work- dates")
+	tika.initVM()
+	florida = parser.from_file('floridaman.pdf')
+	florida_content = florida["content"]
+	florida_sents = sent_tokenize(florida_content)
+	maternity = parser.from_file('maternity.pdf')
+	maternity_content = maternity["content"]
+	maternity_sents = sent_tokenize(maternity_content)
+	date_line = sent_tokenize("This is a date January 11, 2020. This is not a date 444/11/2222. This is a date 12/22/2030.")
+
+	get_dates(florida_sents)
+	get_dates(maternity_sents)
+
